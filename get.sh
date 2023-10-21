@@ -69,7 +69,7 @@ tar -xf "$TMP_DIR/$TAR_FILE" -C "$TMP_DIR"
 SUDO=sudo
 export SUDO
 
-if command pkexec >/dev/null 2>&1; then
+if command -v pkexec >/dev/null 2>&1; then
 	SUDO=pkexec
 fi
 
