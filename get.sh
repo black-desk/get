@@ -66,12 +66,13 @@ echo "Downloading $BASENAME $VERSION..."
 curl -fLO "https://github.com/$USERNAME/$REPO/releases/download/v$VERSION/$TAR_FILE"
 tar -xf "$TMP_DIR/$TAR_FILE" -C "$TMP_DIR"
 
-SUDO=sudo
+test -z "$SUDO" && {
+	SUDO=sudo
+	if command -v pkexec >/dev/null 2>&1; then
+		SUDO=pkexec
+	fi
+}
 export SUDO
-
-if command -v pkexec >/dev/null 2>&1; then
-	SUDO=pkexec
-fi
 
 test -z "$PREFIX" && PREFIX="/usr/local"
 export PREFIX
