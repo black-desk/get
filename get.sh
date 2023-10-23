@@ -8,19 +8,19 @@
 
 set -e
 
-test -z "$USERNAME" && USERNAME="$1"
-test -z "$USERNAME" && {
+test -z "$GITHUB_USERNAME" && GITHUB_USERNAME="$1"
+test -z "$GITHUB_USERNAME" && {
 	echo "User name missing." >&2
 	exit 1
 }
-export USERNAME
+export GITHUB_USERNAME
 
-test -z "$REPO" && REPO="$2"
-test -z "$REPO" && {
+test -z "$GITHUB_REPO" && GITHUB_REPO="$2"
+test -z "$GITHUB_REPO" && {
 	echo "Repository missing." >&2
 	exit 1
 }
-export REPO
+export GITHUB_REPO
 
 # https://gist.github.com/lukechilds/a83e1d7127b78fef38c2914c4ececc3c
 get_latest_release() {
@@ -31,17 +31,17 @@ get_latest_release() {
 }
 
 test -z "$VERSION" && {
-	LATEST="$(get_latest_release "$USERNAME" "$REPO")"
+	LATEST="$(get_latest_release "$GITHUB_USERNAME" "$GITHUB_REPO")"
 	VERSION="$LATEST"
 }
 
 test -z "$VERSION" && {
-	echo "Unable to get $USERNAME/$REPO version." >&2
+	echo "Unable to get $GITHUB_USERNAME/$GITHUB_REPO version." >&2
 	exit 1
 }
 export VERSION
 
-test -z "$BASENAME" && BASENAME=$REPO
+test -z "$BASENAME" && BASENAME=$GITHUB_REPO
 export BASENAME
 
 TMP_DIR="$(mktemp -d)"
@@ -63,7 +63,7 @@ export TAR_FILE
 
 cd "$TMP_DIR"
 echo "Downloading $BASENAME $VERSION..."
-curl -fLO "https://github.com/$USERNAME/$REPO/releases/download/v$VERSION/$TAR_FILE"
+curl -fLO "https://github.com/$GITHUB_USERNAME/$GITHUB_REPO/releases/download/v$VERSION/$TAR_FILE"
 tar -xf "$TMP_DIR/$TAR_FILE" -C "$TMP_DIR"
 
 test -z "$SUDO" && {
